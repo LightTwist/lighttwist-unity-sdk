@@ -1,0 +1,12 @@
+
+{
+	"name": "com.lighttwist.lighttwistunitysdk",
+	"displayName": "LightTwist Unity SDK",
+	"version": "0.1.0",
+	"unity": "2021.2",
+	"description": "Components that can be used to setup custom studios.",
+	"keywords": ["lighttwist"],
+	"category": "LightTwist",
+	"dependencies": {
+	}
+}
