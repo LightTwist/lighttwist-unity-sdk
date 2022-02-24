@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEditor.VersionControl;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 //using UnityEditor.ShaderGraph.Internal;
 //using UnityEngine.Rendering;
 using LtSwift = LtPluginNativeMethods;
@@ -392,7 +393,6 @@ public class LightTwistPlugin : MonoBehaviour
         
         // Depth stencil is probably not important.
         // linear/srgb only seem to affect segmented person?!
-        rt = new RenderTexture(1920, 1080, 24, RenderTextureFormat.BGRA32, RenderTextureReadWrite.sRGB);
 
         LtSwift.init_plugin();
 
@@ -420,11 +420,12 @@ public class LightTwistPlugin : MonoBehaviour
         // {
         //     toUnityCamera.targetTexture = rt;
         // }
-        
-        IntPtr texPtr = rt.GetNativeTexturePtr();
-        LtSwift.set_shared_texture(texPtr, 0);
 
         InitializeTestScene();
+        
+        IntPtr texPtr = rt.GetNativeTexturePtr();
+        Debug.Log("TexPtr: " + texPtr);
+        LtSwift.set_shared_texture(texPtr, 0);
 
         // yield return StartCoroutine("CallPluginAtEndOfFrames");
     }
@@ -525,6 +526,11 @@ public class LightTwistPlugin : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        rt = new RenderTexture(1920, 1080, 24, RenderTextureFormat.BGRA32, RenderTextureReadWrite.sRGB);
+    }
+
     // void Awake()
     // {
     //     instance = this;
@@ -596,6 +602,7 @@ public class LightTwistPlugin : MonoBehaviour
 
     private void SetupCurrentCamera(Camera argNewCamera)
     {
+        Debug.Log("Setting target texture to rt: " + rt);
         argNewCamera.targetTexture = rt;
     }
 
