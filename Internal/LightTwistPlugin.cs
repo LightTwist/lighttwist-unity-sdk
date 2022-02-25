@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
+#if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.VersionControl;
+#endif
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 //using UnityEditor.ShaderGraph.Internal;
@@ -88,6 +89,14 @@ public class LightTwistPlugin : MonoBehaviour
             var url = Marshal.PtrToStringUTF8(utf8URL);
             instance.HandleSceneLoadRequest(url);
         }
+    }
+
+    private static void DisconnectedFromMacOsApp(int reason)
+    {
+        Debug.Log("Received disconnection signal... reason: " + reason);
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+#endif
     }
 
     private void HandleSharedTextureChanged(IntPtr tex_ref, int tex_id, int width, int height) 
@@ -393,9 +402,11 @@ public class LightTwistPlugin : MonoBehaviour
 
     private void RegisterNativeEvents()
     {
+        Debug.Log("Registering native events");
         LtSwift.register_keyboard_events_callback(KeyboardEvent);
         LtSwift.register_shared_texture_changed_callback(SharedTextureChanged);
         LtSwift.register_studio_load_callback(SceneLoadRequested);
+        LtSwift.register_disconnect_callback(DisconnectedFromMacOsApp);
     }
 
     private void TryReplaceCurrentCamera(Camera argNewCamera)

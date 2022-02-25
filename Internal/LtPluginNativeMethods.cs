@@ -53,6 +53,10 @@ public static class LtPluginNativeMethods
     internal static register_studio_load_callback_t register_studio_load_callback;
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void register_disconnect_callback_t(disconnect_callback_t callback);
+    internal static register_disconnect_callback_t register_disconnect_callback;
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate ELtRequestUpdateError request_update_t(byte[] buffer, int bufferSize);
     internal static request_update_t request_update;
 
@@ -64,6 +68,9 @@ public static class LtPluginNativeMethods
     
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void studio_load_callback_t(IntPtr utf8URL);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void disconnect_callback_t(int reason);
 
     [DllImport("libLTUnityBridge", CharSet = CharSet.Ansi)]
     internal static extern void write_to_log(string str);
@@ -91,6 +98,8 @@ public static class LtPluginNativeMethods
                 "register_shared_texture_changed_callback");
         register_studio_load_callback =
             FunctionLoader.LoadFunction<register_studio_load_callback_t>(libpath, "register_studio_load_callback");
+        register_disconnect_callback =
+            FunctionLoader.LoadFunction<register_disconnect_callback_t>(libpath, "register_disconnect_callback");
         request_update = FunctionLoader.LoadFunction<request_update_t>(libpath, "request_update");
 #endif
     }
