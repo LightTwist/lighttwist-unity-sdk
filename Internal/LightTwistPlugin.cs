@@ -26,6 +26,7 @@ public class LightTwistPlugin : MonoBehaviour
     [RuntimeInitializeOnLoadMethod]
     public static void BootstrapFunction()
     {
+        #if UNITY_EDITOR
         Instantiate
         (
             AssetDatabase.LoadAssetAtPath<GameObject>
@@ -33,6 +34,7 @@ public class LightTwistPlugin : MonoBehaviour
                 "Packages/com.lighttwist.lighttwistunitysdk/Internal/Prefabs/MacOsTestingBridge.prefab"
             )
         );
+        #endif
     }
     
     // forward declaration of symbols to be loaded

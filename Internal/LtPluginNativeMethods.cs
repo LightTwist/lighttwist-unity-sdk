@@ -74,6 +74,65 @@ public static class LtPluginNativeMethods
 
     [DllImport("libLTUnityBridge", CharSet = CharSet.Ansi)]
     internal static extern void write_to_log(string str);
+#else
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern IntPtr get_shared_texture(int tex_id, int[] dimensions);
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern IntPtr set_shared_texture(IntPtr texPtr, int id);
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern IntPtr texture_updated(int id);
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern int teardown_plugin();
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern int init_plugin();
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern int setup_webcam_port();
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern int clear_webcam_port();
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern void get_scaling_parameters(float[] scaling_parameters);
+    
+    [DllImport("libLTUnityBridge")]
+    internal static extern void register_keyboard_events_callback(key_callback_t callback);
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern void register_shared_texture_changed_callback(shared_texture_changed_callback_t callback);
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern void register_studio_load_callback(studio_load_callback_t callback);
+    
+    [DllImport("libLTUnityBridge")]
+    internal static extern ELtRequestUpdateError request_update(byte[] buffer, int bufferSize);
+    
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void key_callback_t(KeyCode keycode, ELtKeycodeState state);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void shared_texture_changed_callback_t(IntPtr tex_ref, int tex_id, int width, int height);
+    
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void studio_load_callback_t(IntPtr utf8URL);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void disconnect_callback_t(int reason);
+
+    //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    //internal delegate void register_disconnect_callback_t(disconnect_callback_t callback);
+
+    [DllImport("libLTUnityBridge")]
+    internal static extern void register_disconnect_callback(disconnect_callback_t callback);
+    
+    [DllImport("libLTUnityBridge", CharSet = CharSet.Ansi)]
+    internal static extern void write_to_log(string str);
+
 #endif
 
     internal static void RegisterSwiftMethods()
