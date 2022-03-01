@@ -4,9 +4,26 @@ using System.Diagnostics;
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using System.IO.Compression;
 using UnityEditor.SceneManagement;
 using Debug = UnityEngine.Debug;
+
+[Serializable]
+public class MetaData
+{
+    public string version;
+    public string studio_name;
+    public string studio_id;
+
+    public List<StudioSpot> spots = new();
+}
+
+[Serializable]
+public class StudioSpot
+{
+    public string name;
+    public string id;
+    public List<float> camera_transform = new();
+}
 
 public class LtStudioMetadata : EditorWindow
 {
@@ -135,16 +152,69 @@ public class LtStudioMetadata : EditorWindow
 
     private void CreateSettingsFile(string argPath)
     {
-        var lines = new[]
-        {
-            "{",
-            $"   \"version\": \"{jsonStudioVersion}\",",
-            $"   \"studio_name\": \"{jsonStudioName}\",",
-            $"   \"studio_id\": \"{jsonStudioId}\"",
-            "}"
-        };
+        var metadata = new MetaData();
+        metadata.version = jsonStudioVersion;
+        metadata.studio_name = jsonStudioName;
+        metadata.studio_id = jsonStudioId;
         
-        File.WriteAllLines(argPath, lines);
+        var currentRootObjects = EditorSceneManager.GetActiveScene().GetRootGameObjects();
+        
+        List<LtMainCamera> mainCameras = new();
+            
+        foreach (var currentRoot in currentRootObjects)
+        {
+            mainCameras.AddRange(currentRoot.GetComponents<LtMainCamera>());
+        }
+        
+        List<LtCameraView> cameraViews = new();
+            
+        foreach (var currentRoot in currentRootObjects)
+        {
+            cameraViews.AddRange(currentRoot.GetComponents<LtCameraView>());
+        }
+
+        if (mainCameras.Count != 1)
+        {
+            throw new Exception("Exactly one LtMainCamera must be present in the scene.");
+        }
+
+        if (mainCameras[0].createCameraView)
+        {
+            var newSpot = new StudioSpot();
+            newSpot.name = mainCameras[0].spotName;
+            newSpot.id = mainCameras[0].spotId;
+
+            var camTransform = mainCameras[0].transform;
+            var transformMatrix = Matrix4x4.TRS(camTransform.position, camTransform.rotation, camTransform.localScale);
+            FillListWithTransform(transformMatrix, newSpot.camera_transform);
+            metadata.spots.Add(newSpot);
+        }
+
+        foreach (var currentView in cameraViews)
+        {
+            var newSpot = new StudioSpot();
+            newSpot.name = currentView.spotName;
+            newSpot.id = currentView.spotId;
+
+            var camTransform = currentView.transform;
+            var transformMatrix = Matrix4x4.TRS(camTransform.position, camTransform.rotation, camTransform.localScale);
+            FillListWithTransform(transformMatrix, newSpot.camera_transform);
+            metadata.spots.Add(newSpot);
+        }
+
+        var output = JsonUtility.ToJson(metadata, true);
+        File.WriteAllText(argPath, output);
+
+        // var lines = new[]
+        // {
+        //     "{",
+        //     $"   \"version\": \"{jsonStudioVersion}\",",
+        //     $"   \"studio_name\": \"{jsonStudioName}\",",
+        //     $"   \"studio_id\": \"{jsonStudioId}\"",
+        //     "}"
+        // };
+        //
+        // File.WriteAllLines(argPath, lines);
     }
 
     private static void CreateZipFromFolder(string argFolderToZip, string argZipToCreate)
@@ -182,5 +252,27 @@ public class LtStudioMetadata : EditorWindow
 
         using var zipProcess = Process.Start(processInfo);
         zipProcess?.WaitForExit();
+    }
+
+    private static void FillListWithTransform(Matrix4x4 argMatrix, List<float> argFloats)
+    {
+        argFloats.Clear();
+        
+        argFloats.Add(argMatrix.m00);
+        argFloats.Add(argMatrix.m01);
+        argFloats.Add(argMatrix.m02);
+        argFloats.Add(argMatrix.m03);
+        argFloats.Add(argMatrix.m10);
+        argFloats.Add(argMatrix.m11);
+        argFloats.Add(argMatrix.m12);
+        argFloats.Add(argMatrix.m13);
+        argFloats.Add(argMatrix.m20);
+        argFloats.Add(argMatrix.m21);
+        argFloats.Add(argMatrix.m22);
+        argFloats.Add(argMatrix.m23);
+        argFloats.Add(argMatrix.m30);
+        argFloats.Add(argMatrix.m31);
+        argFloats.Add(argMatrix.m32);
+        argFloats.Add(argMatrix.m33);
     }
 }
