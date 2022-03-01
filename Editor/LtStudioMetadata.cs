@@ -124,7 +124,11 @@ public class LtStudioMetadata : EditorWindow
             
             // Fill folder with relevant files
             File.Copy(assetBundlePath, Path.Combine(studioFolderPath, studioFileName));
-            File.Copy(Path.Combine(tempFolderName, thumbnailName), Path.Combine(studioFolderPath, thumbnailName));
+            File.Copy
+            (
+                Path.Combine(tempFolderName, thumbnailName),
+                Path.Combine(studioFolderPath, thumbnailName)
+            );
             CreateSettingsFile(Path.Combine(studioFolderPath, metadataJsonName));
 
             var outputZip = $"{studioFolderName}.zip";
@@ -136,7 +140,18 @@ public class LtStudioMetadata : EditorWindow
             // Zip folder into asset bundle
             //ZipFile.CreateFromDirectory(tempFolderPath, outputZip);
             CreateZipFromFolder(tempFolderPath, outputZip);
-            File.Copy(Path.Combine(tempFolderPath, outputZip), outputZip);
+
+            var savePath = EditorUtility.SaveFilePanel
+            (
+                title: "Save studio", directory: "", defaultName: outputZip, extension: ".zip"
+            );
+
+            if (string.IsNullOrWhiteSpace(savePath) == false)
+            {
+                File.Copy(Path.Combine(tempFolderPath, outputZip), savePath);
+            }
+
+            Debug.Log("Studio file created");
         }
     }
 
