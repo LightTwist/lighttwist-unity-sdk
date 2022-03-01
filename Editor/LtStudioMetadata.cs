@@ -95,7 +95,7 @@ public class LtStudioMetadata : EditorWindow
             
             foreach (var currentRoot in currentRootObjects)
             {
-                mainCameras.AddRange(currentRoot.GetComponents<LtMainCamera>());
+                mainCameras.AddRange(currentRoot.GetComponentsInChildren<LtMainCamera>());
             }
 
             if (mainCameras.Count < 1)
@@ -163,14 +163,14 @@ public class LtStudioMetadata : EditorWindow
             
         foreach (var currentRoot in currentRootObjects)
         {
-            mainCameras.AddRange(currentRoot.GetComponents<LtMainCamera>());
+            mainCameras.AddRange(currentRoot.GetComponentsInChildren<LtMainCamera>());
         }
         
         List<LtCameraView> cameraViews = new();
             
         foreach (var currentRoot in currentRootObjects)
         {
-            cameraViews.AddRange(currentRoot.GetComponents<LtCameraView>());
+            cameraViews.AddRange(currentRoot.GetComponentsInChildren<LtCameraView>());
         }
 
         if (mainCameras.Count != 1)
