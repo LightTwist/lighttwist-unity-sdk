@@ -1,0 +1,18 @@
+{
+    "name": "SdkEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:74a7e532619b24fcd90318cd1d99d66e"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
