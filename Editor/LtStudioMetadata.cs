@@ -247,7 +247,7 @@ public class LtStudioMetadata : EditorWindow
         string binPath = "Packages/com.lighttwist.lighttwistunitysdk/Editor/third-party/7zip/windows";
         var processInfo = new ProcessStartInfo
         {
-            FileName = Path.Combine(binPath, "7za.exe"),
+            FileName = Path.GetFullPath(Path.Combine(binPath, "7za.exe")),
             WorkingDirectory = argFolderToZip,
             Arguments = $"a {argZipToCreate} *"
         };
