@@ -191,9 +191,10 @@ public static class LtPluginNativeMethods
     static readonly List<string> temp_libs = new();
     static string get_unique_library_instance(string orig_path)
     {
-        var unique_path = Path.GetTempFileName() + "_" + Path.GetFileName(orig_path);
+        //var unique_path = Path.GetTempFileName() + "_" + Path.GetFileName(orig_path);
+        var unique_path = Path.GetFullPath(Path.Combine(Path.GetTempPath(), Path.GetFileName(orig_path)));
 
-        File.Copy(orig_path, unique_path);
+        File.Copy(Path.GetFullPath(orig_path), unique_path, true);
 
         Debug.Log("Copied " + orig_path + " to " + unique_path);
         temp_libs.Add(unique_path);
