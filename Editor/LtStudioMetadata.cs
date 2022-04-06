@@ -139,7 +139,8 @@ public class LtStudioMetadata : EditorWindow
             
             // Zip folder into asset bundle
             //ZipFile.CreateFromDirectory(tempFolderPath, outputZip);
-            CreateZipFromFolder(tempFolderPath, outputZip);
+            //CreateZipFromFolder(tempFolderPath, outputZip);
+            CreateZipFromFolder(studioFolderPath, outputZip);
 
             var savePath = EditorUtility.SaveFilePanel
             (
@@ -148,7 +149,7 @@ public class LtStudioMetadata : EditorWindow
 
             if (string.IsNullOrWhiteSpace(savePath) == false)
             {
-                File.Copy(Path.Combine(tempFolderPath, outputZip), savePath);
+                File.Copy(Path.Combine(studioFolderPath, outputZip), savePath);
             }
 
             Debug.Log("Studio file created");
@@ -258,12 +259,21 @@ public class LtStudioMetadata : EditorWindow
 
     private static void CreateZipFromFolderPosix(string argFolderToZip, string argZipToCreate)
     {
+        Debug.Log("ZIPPING 4: " + argFolderToZip + " :: " + argZipToCreate);
         var processInfo = new ProcessStartInfo
         {
-            FileName = "zip",
+            FileName = "/bin/bash",
             WorkingDirectory = argFolderToZip,
-            Arguments = $"-r {argZipToCreate} ."
+            Arguments = $"-c \"zip -r {argZipToCreate} .\"",
+            UseShellExecute = true
         };
+
+        // var processInfo = new ProcessStartInfo
+        // {
+        //     FileName = "zip",
+        //     WorkingDirectory = argFolderToZip,
+        //     Arguments = $"-r {argZipToCreate} ."
+        // };
 
         using var zipProcess = Process.Start(processInfo);
         zipProcess?.WaitForExit();
